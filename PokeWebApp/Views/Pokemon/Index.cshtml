@@ -1,0 +1,63 @@
+﻿@* Paso 6: Vista *@
+
+@model List<PokeWebApp.Models.Pokemon>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" asp-controller="Pokemon" asp-action="Index">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Buscar Pokémon por nombre" name="searchTerm" value="@ViewData["CurrentFilter"]" />
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </div>
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipos</th>
+                    <th>Imagen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pokemon in Model)
+                {
+                    <tr>
+                        <td>@pokemon.Id</td>
+                        <td>@pokemon.Name</td>
+                        <td>@string.Join(", ", pokemon.Types)</td>
+                        <td><img src="@pokemon.ImageUrl" alt="@pokemon.Name" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-center">
+            <!-- Paginación -->
+            @if (ViewBag.PageCount > 1)
+            {
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm">
+                        @if (ViewBag.PageNumber > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { page = ViewBag.PageNumber - 1, searchTerm = ViewData["CurrentFilter"] as string })">Previous</a></li>
+                        }
+
+                        @for (int i = 1; i <= ViewBag.PageCount; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")"><a class="page-link" href="@Url.Action("Index", new { page = i, searchTerm = ViewData["CurrentFilter"] as string })">@i</a></li>
+                        }
+
+                        @if (ViewBag.PageNumber < ViewBag.PageCount)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index", new { page = ViewBag.PageNumber + 1, searchTerm = ViewData["CurrentFilter"] as string })">Next</a></li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
